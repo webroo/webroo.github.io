@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Tube station proximity</title>
+        
+		<style type="text/css">
+			body {
+				font-family: Helvetica, Arial, sans;
+				font-size: 13px;
+				background-color: #1D1D1D;
+				color: #DDD;
+				margin: 0;
+				padding: 0;
+			}
+			
+			input {
+				margin-left: 10px;
+			}
+			
+			h1 {
+				font-size: 18px;
+				margin: 0 0 5px 0;
+			}
+			
+			#mapcanvas {
+				width: 680px;
+				height: 520px;
+				float: left;
+				margin: 10px;
+			}
+			
+			#controls {
+				float: left;
+				background-color: #444;
+				border-radius: 5px;
+				padding: 10px;
+				margin: 10px;
+			}
+			
+			#lines {
+				float: left;
+				margin-right: 25px;
+			}
+			
+			#zones {
+				float: left;
+			}
+			
+			#controls div {
+				margin-top: 10px;
+			}
+			
+			#controls p {
+				margin: 3px;
+			}
+		</style>
+		
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	    <script type="text/javascript">
+			var tube = (function() {
+				var tubelines = [ "Bakerloo", "Central", "Circle", "District", "Hammersmith & City", "Jubilee", "Metropolitan", "Northern", "Piccadilly", "Victoria", "Waterloo & City" ];
+				var tubestations = [ { name:"Acton Town", zone:3, lines:[3,8], lat:51.502817347, lng:-0.280214656, }, { name:"Aldgate", zone:1, lines:[2,6], lat:51.514342817, lng:-0.075600611, }, { name:"Aldgate East", zone:1, lines:[3,4], lat:51.515300715, lng:-0.072274025, }, { name:"Alperton", zone:4, lines:[8], lat:51.540757238, lng:-0.299447373, }, { name:"Amersham", zone:9, lines:[6], lat:51.674200078, lng:-0.607416256, }, { name:"Angel", zone:1, lines:[7], lat:51.532570565, lng:-0.105772295, }, { name:"Archway", zone:2, lines:[7], lat:51.565495779, lng:-0.135099708, }, { name:"Arnos Grove", zone:4, lines:[8], lat:51.616398898, lng:-0.133501198, }, { name:"Arsenal", zone:2, lines:[8], lat:51.558561500, lng:-0.105746916, }, { name:"Baker Street", zone:1, lines:[2,4,5,6], lat:51.523131159, lng:-0.156881847, }, { name:"Balham", zone:3, lines:[7], lat:51.443404055, lng:-0.153182996, }, { name:"Bank", zone:1, lines:[1,7,10], lat:51.513373502, lng:-0.088906725, }, { name:"Barbican", zone:1, lines:[2,4,6], lat:51.520213415, lng:-0.097698591, }, { name:"Barking", zone:4, lines:[3,4], lat:51.539520555, lng:0.080855743, }, { name:"Barkingside", zone:4, lines:[1], lat:51.585855444, lng:0.088509189, }, { name:"Barons Court", zone:2, lines:[3,8], lat:51.490227393, lng:-0.213576608, }, { name:"Bayswater", zone:1, lines:[2,3], lat:51.512299747, lng:-0.188009447, }, { name:"Becontree", zone:5, lines:[3], lat:51.540363533, lng:0.127401050, }, { name:"Belsize Park", zone:2, lines:[7], lat:51.550493839, lng:-0.164212238, }, { name:"Bermondsey", zone:2, lines:[5], lat:51.498024522, lng:-0.063635613, }, { name:"Bethnal Green", zone:2, lines:[1], lat:51.527267549, lng:-0.055423847, }, { name:"Blackfriars", zone:1, lines:[2,3], lat:51.511562507, lng:-0.103596123, }, { name:"Blackhorse Road", zone:3, lines:[9], lat:51.587012708, lng:-0.040984391, }, { name:"Bond Street", zone:1, lines:[1,5], lat:51.513879061, lng:-0.149315708, }, { name:"Borough", zone:1, lines:[7], lat:51.501270700, lng:-0.093692651, }, { name:"Boston Manor", zone:4, lines:[8], lat:51.495765550, lng:-0.324729543, }, { name:"Bounds Green", zone:3, lines:[8], lat:51.607152312, lng:-0.124210461, }, { name:"Bow Road", zone:2, lines:[3,4], lat:51.526866904, lng:-0.024809606, }, { name:"Brent Cross", zone:3, lines:[7], lat:51.576860881, lng:-0.213428926, }, { name:"Brixton", zone:2, lines:[9], lat:51.462653263, lng:-0.114611795, }, { name:"Bromley By Bow", zone:2, lines:[3,4], lat:51.524842766, lng:-0.011657480, }, { name:"Buckhurst Hill", zone:5, lines:[1], lat:51.626575799, lng:0.046733076, }, { name:"Burnt Oak", zone:4, lines:[7], lat:51.602738309, lng:-0.264170829, }, { name:"Caledonian Road", zone:2, lines:[8], lat:51.548491331, lng:-0.118292408, }, { name:"Camden Town", zone:2, lines:[7], lat:51.539468601, lng:-0.142709548, }, { name:"Canada Water", zone:2, lines:[5], lat:51.497965204, lng:-0.049695892, }, { name:"Canary Wharf", zone:2, lines:[5], lat:51.503623130, lng:-0.019426407, }, { name:"Canning Town", zone:3, lines:[5], lat:51.513908219, lng:0.008181999, }, { name:"Cannon Street", zone:1, lines:[2,3], lat:51.511505842, lng:-0.090681195, }, { name:"Canons Park", zone:5, lines:[5], lat:51.607820681, lng:-0.294618585, }, { name:"Chalfont & Latimer", zone:8, lines:[6], lat:51.668076304, lng:-0.560477729, }, { name:"Chalk Farm", zone:2, lines:[7], lat:51.544151895, lng:-0.153701577, }, { name:"Chancery Lane", zone:1, lines:[1], lat:51.518194371, lng:-0.111660401, }, { name:"Charing Cross", zone:1, lines:[0,7], lat:51.508661338, lng:-0.124733426, }, { name:"Chesham", zone:9, lines:[6], lat:51.705072763, lng:-0.611158209, }, { name:"Chigwell", zone:4, lines:[1], lat:51.617931677, lng:0.074523461, }, { name:"Chiswick Park", zone:3, lines:[3], lat:51.494371103, lng:-0.267715593, }, { name:"Chorleywood", zone:7, lines:[6], lat:51.654266956, lng:-0.518312173, }, { name:"Clapham Common", zone:2, lines:[7], lat:51.461803357, lng:-0.138295129, }, { name:"Clapham North", zone:2, lines:[7], lat:51.464923475, lng:-0.129515616, }, { name:"Clapham South", zone:2, lines:[7], lat:51.452674157, lng:-0.147959970, }, { name:"Cockfosters", zone:5, lines:[8], lat:51.651744780, lng:-0.149604351, }, { name:"Colindale", zone:4, lines:[7], lat:51.595351419, lng:-0.250108975, }, { name:"Colliers Wood", zone:3, lines:[7], lat:51.418149511, lng:-0.177678808, }, { name:"Covent Garden", zone:1, lines:[8], lat:51.512979259, lng:-0.124146712, }, { name:"Croxley", zone:7, lines:[6], lat:51.647103901, lng:-0.441669863, }, { name:"Dagenham East", zone:5, lines:[3], lat:51.544187099, lng:0.165864184, }, { name:"Dagenham Heathway", zone:5, lines:[3], lat:51.541701213, lng:0.147674142, }, { name:"Debden", zone:6, lines:[1], lat:51.645494269, lng:0.083832469, }, { name:"Dollis Hill", zone:3, lines:[5], lat:51.551969462, lng:-0.238775764, }, { name:"Ealing Broadway", zone:3, lines:[1], lat:51.514979099, lng:-0.301471777, }, { name:"Ealing Common", zone:3, lines:[3,8], lat:51.510196802, lng:-0.288221583, }, { name:"Earls Court", zone:1, lines:[3,8], lat:51.491876177, lng:-0.193526047, }, { name:"East Acton", zone:2, lines:[1], lat:51.516648287, lng:-0.247481639, }, { name:"East Finchley", zone:3, lines:[7], lat:51.587335007, lng:-0.164725648, }, { name:"East Ham", zone:3, lines:[3,4], lat:51.538996697, lng:0.051467145, }, { name:"East Putney", zone:2, lines:[3], lat:51.458878826, lng:-0.210975744, }, { name:"Eastcote", zone:5, lines:[6,8], lat:51.576553216, lng:-0.396806460, }, { name:"Edgware", zone:5, lines:[7], lat:51.613684847, lng:-0.274946709, }, { name:"Edgware Road (Bakerloo)", zone:1, lines:[0], lat:51.520250118, lng:-0.170106720, }, { name:"Edgware Road (Circle/District/H&C)", zone:1, lines:[2,3,4], lat:51.519994068, lng:-0.167644928, }, { name:"Elephant & Castle", zone:1, lines:[0,7], lat:51.495847724, lng:-0.100711857, }, { name:"Elm Park", zone:6, lines:[3], lat:51.549872773, lng:0.199159843, }, { name:"Embankment", zone:1, lines:[0,2,3,7], lat:51.507310119, lng:-0.122340604, }, { name:"Epping", zone:6, lines:[1], lat:51.693689859, lng:0.113845981, }, { name:"Euston", zone:1, lines:[7], lat:51.528665946, lng:-0.133265016, }, { name:"Euston Square", zone:1, lines:[2,4,6], lat:51.525626629, lng:-0.135824263, }, { name:"Fairlop", zone:4, lines:[1], lat:51.595747808, lng:0.090921024, }, { name:"Farringdon", zone:1, lines:[2,4,6], lat:51.520517640, lng:-0.105050320, }, { name:"Finchley Central", zone:4, lines:[7], lat:51.601039042, lng:-0.192428710, }, { name:"Finchley Road", zone:2, lines:[5,6], lat:51.547132085, lng:-0.180473820, }, { name:"Finsbury Park", zone:2, lines:[8,9], lat:51.564470950, lng:-0.106495674, }, { name:"Fulham Broadway", zone:2, lines:[3], lat:51.480598681, lng:-0.194937978, }, { name:"Gants Hill", zone:4, lines:[1], lat:51.576557097, lng:0.066103646, }, { name:"Gloucester Road", zone:1, lines:[2,3,8], lat:51.494312745, lng:-0.182960687, }, { name:"Golders Green", zone:3, lines:[7], lat:51.572285858, lng:-0.193965660, }, { name:"Goldhawk Road", zone:2, lines:[2,4], lat:51.502026467, lng:-0.226720989, }, { name:"Goodge Street", zone:1, lines:[7], lat:51.520499085, lng:-0.134642741, }, { name:"Grange Hill", zone:4, lines:[1], lat:51.613409710, lng:0.092132915, }, { name:"Great Portland Street", zone:1, lines:[2,4,6], lat:51.523789348, lng:-0.143930250, }, { name:"Green Park", zone:1, lines:[5,8,9], lat:51.506918921, lng:-0.142899998, }, { name:"Greenford", zone:4, lines:[1], lat:51.542361624, lng:-0.346412020, }, { name:"Gunnersbury", zone:3, lines:[3], lat:51.491867355, lng:-0.275147144, }, { name:"Hainault", zone:4, lines:[1], lat:51.603792541, lng:0.093105998, }, { name:"Hammersmith (Circle)", zone:2, lines:[2,4], lat:51.492639704, lng:-0.222367633, }, { name:"Hammersmith (District & Piccadilly)", zone:2, lines:[3,8], lat:51.493572715, lng:-0.224892685, }, { name:"Hampstead", zone:2, lines:[7], lat:51.556754839, lng:-0.178202920, }, { name:"Hanger Lane", zone:3, lines:[1], lat:51.530072876, lng:-0.292973103, }, { name:"Harlesden", zone:3, lines:[0], lat:51.536255187, lng:-0.257476566, }, { name:"Harrow & Wealdstone", zone:5, lines:[0], lat:51.592263678, lng:-0.335193509, }, { name:"Harrow On The Hill", zone:5, lines:[6], lat:51.579392732, lng:-0.336973212, }, { name:"Hatton Cross", zone:5, lines:[8], lat:51.466685423, lng:-0.423356896, }, { name:"Heathrow Airport Terminal 1 2 & 3", zone:6, lines:[8], lat:51.458624169, lng:-0.446006279, }, { name:"Heathrow Terminal 4", zone:6, lines:[8], lat:51.471290175, lng:-0.452385526, }, { name:"Heathrow Terminal 5", zone:6, lines:[8], lat:51.471593893, lng:-0.487913971, }, { name:"Hendon Central", zone:3, lines:[7], lat:51.583358035, lng:-0.226465843, }, { name:"High Barnet", zone:5, lines:[7], lat:51.650657954, lng:-0.194737478, }, { name:"High Street Kensington", zone:1, lines:[2,3], lat:51.500745724, lng:-0.192480691, }, { name:"Highbury & Islington", zone:2, lines:[9], lat:51.546300742, lng:-0.103948483, }, { name:"Highgate", zone:3, lines:[7], lat:51.577658850, lng:-0.146618543, }, { name:"Hillingdon", zone:6, lines:[6,8], lat:51.553780278, lng:-0.449881290, }, { name:"Holborn", zone:1, lines:[1,8], lat:51.517506300, lng:-0.119995446, }, { name:"Holland Park", zone:2, lines:[1], lat:51.507404594, lng:-0.205705089, }, { name:"Holloway Road", zone:2, lines:[8], lat:51.552821168, lng:-0.112913541, }, { name:"Hornchurch", zone:6, lines:[3], lat:51.554072870, lng:0.218999452, }, { name:"Hounslow Central", zone:4, lines:[8], lat:51.471152208, lng:-0.366881823, }, { name:"Hounslow East", zone:4, lines:[8], lat:51.473241130, lng:-0.356648626, }, { name:"Hounslow West", zone:5, lines:[8], lat:51.473106027, lng:-0.385684911, }, { name:"Hyde Park Corner", zone:1, lines:[8], lat:51.502828707, lng:-0.152730468, }, { name:"Ickenham", zone:6, lines:[6,8], lat:51.562046398, lng:-0.441975598, }, { name:"Kennington", zone:2, lines:[7], lat:51.488193706, lng:-0.105475190, }, { name:"Kensal Green", zone:2, lines:[0], lat:51.530526498, lng:-0.224683208, }, { name:"Kensington (Olympia)", zone:2, lines:[3], lat:51.497883187, lng:-0.210355325, }, { name:"Kentish Town", zone:2, lines:[7], lat:51.550367969, lng:-0.140452418, }, { name:"Kenton", zone:4, lines:[0], lat:51.581846365, lng:-0.317125399, }, { name:"Kew Gardens", zone:3, lines:[3], lat:51.477097778, lng:-0.285212918, }, { name:"Kilburn", zone:2, lines:[5], lat:51.546943685, lng:-0.204612104, }, { name:"Kilburn Park", zone:2, lines:[0], lat:51.535139924, lng:-0.193943923, }, { name:"King's Cross St Pancras", zone:1, lines:[2,4,6,7,8,9], lat:51.530467020, lng:-0.123838556, }, { name:"Kingsbury", zone:4, lines:[5], lat:51.584818808, lng:-0.278758866, }, { name:"Knightsbridge", zone:1, lines:[8], lat:51.501619530, lng:-0.160476448, }, { name:"Ladbroke Grove", zone:2, lines:[2,4], lat:51.517255223, lng:-0.210833786, }, { name:"Lambeth North", zone:1, lines:[0], lat:51.499131086, lng:-0.111745717, }, { name:"Lancaster Gate", zone:1, lines:[1], lat:51.511894768, lng:-0.175400817, }, { name:"Latimer Road", zone:2, lines:[2,4], lat:51.513609630, lng:-0.217746133, }, { name:"Leicester Square", zone:1, lines:[7,8], lat:51.511290786, lng:-0.128222550, }, { name:"Leyton", zone:3, lines:[1], lat:51.556503397, lng:-0.005618740, }, { name:"Leytonstone", zone:3, lines:[1], lat:51.568254279, lng:0.008223901, }, { name:"Liverpool Street", zone:1, lines:[1,2,4,6], lat:51.517421127, lng:-0.082958757, }, { name:"London Bridge", zone:1, lines:[5,7], lat:51.505572080, lng:-0.086907553, }, { name:"Loughton", zone:6, lines:[1], lat:51.641570622, lng:0.055302636, }, { name:"Maida Vale", zone:2, lines:[0], lat:51.529828870, lng:-0.185609035, }, { name:"Manor House", zone:2, lines:[8], lat:51.570821904, lng:-0.095699338, }, { name:"Mansion House", zone:1, lines:[2,3], lat:51.512094100, lng:-0.094171678, }, { name:"Marble Arch", zone:1, lines:[1], lat:51.513610410, lng:-0.158415035, }, { name:"Marylebone", zone:1, lines:[0], lat:51.522296752, lng:-0.163080891, }, { name:"Mile End", zone:2, lines:[1,3,4], lat:51.525162272, lng:-0.033400538, }, { name:"Mill Hill East", zone:4, lines:[7], lat:51.608322331, lng:-0.209873024, }, { name:"Monument", zone:1, lines:[2,3], lat:51.510634491, lng:-0.086160710, }, { name:"Moor Park", zone:6, lines:[6], lat:51.629790112, lng:-0.432617492, }, { name:"Moorgate", zone:1, lines:[2,4,6,7], lat:51.518434153, lng:-0.088988842, }, { name:"Morden", zone:4, lines:[7], lat:51.402413117, lng:-0.194767862, }, { name:"Mornington Crescent", zone:2, lines:[7], lat:51.534278448, lng:-0.138821617, }, { name:"Neasden", zone:3, lines:[5], lat:51.554031104, lng:-0.249760238, }, { name:"Newbury Park", zone:4, lines:[1], lat:51.575639509, lng:0.090329654, }, { name:"North Acton", zone:2, lines:[1], lat:51.523436048, lng:-0.259700310, }, { name:"North Ealing", zone:3, lines:[8], lat:51.517624754, lng:-0.288970664, }, { name:"North Greenwich", zone:2, lines:[5], lat:51.500253938, lng:0.003617380, }, { name:"North Harrow", zone:5, lines:[6], lat:51.584853438, lng:-0.362187319, }, { name:"North Wembley", zone:4, lines:[0], lat:51.562548968, lng:-0.304116057, }, { name:"Northfields", zone:3, lines:[8], lat:51.499341967, lng:-0.314126947, }, { name:"Northolt", zone:5, lines:[1], lat:51.548215120, lng:-0.368420431, }, { name:"Northwick Park", zone:4, lines:[6], lat:51.578651178, lng:-0.318174443, }, { name:"Northwood", zone:6, lines:[6], lat:51.611217965, lng:-0.423813419, }, { name:"Northwood Hills", zone:6, lines:[6], lat:51.600549275, lng:-0.409262774, }, { name:"Notting Hill Gate", zone:1, lines:[1,2,3], lat:51.509135067, lng:-0.196517879, }, { name:"Oakwood", zone:5, lines:[8], lat:51.647643252, lng:-0.131828432, }, { name:"Old Street", zone:1, lines:[7], lat:51.525673036, lng:-0.087540958, }, { name:"Osterley", zone:4, lines:[8], lat:51.481001483, lng:-0.351955627, }, { name:"Oval", zone:2, lines:[7], lat:51.482175453, lng:-0.112872504, }, { name:"Oxford Circus", zone:1, lines:[0,1,9], lat:51.515198326, lng:-0.141753096, }, { name:"Paddington", zone:1, lines:[2,3,4], lat:51.515378873, lng:-0.175365294, }, { name:"Park Royal", zone:3, lines:[8], lat:51.526964839, lng:-0.284197489, }, { name:"Parsons Green", zone:2, lines:[3], lat:51.475172662, lng:-0.201208748, }, { name:"Perivale", zone:4, lines:[1], lat:51.536659128, lng:-0.323817282, }, { name:"Piccadilly Circus", zone:1, lines:[0,8], lat:51.510101282, lng:-0.133994054, }, { name:"Pimlico", zone:1, lines:[9], lat:51.489267016, lng:-0.133715860, }, { name:"Pinner", zone:5, lines:[6], lat:51.592920216, lng:-0.380877555, }, { name:"Plaistow", zone:3, lines:[3,4], lat:51.531286207, lng:0.017807961, }, { name:"Preston Road", zone:4, lines:[6], lat:51.572097704, lng:-0.295226402, }, { name:"Putney Bridge", zone:2, lines:[3], lat:51.467978221, lng:-0.208948328, }, { name:"Queens Park", zone:2, lines:[0], lat:51.534167072, lng:-0.204675391, }, { name:"Queensbury", zone:4, lines:[5], lat:51.594408067, lng:-0.285756688, }, { name:"Queensway", zone:1, lines:[1], lat:51.510453171, lng:-0.187402539, }, { name:"Ravenscourt Park", zone:2, lines:[3], lat:51.494211265, lng:-0.236225664, }, { name:"Rayners Lane", zone:5, lines:[6,8], lat:51.575039739, lng:-0.370959601, }, { name:"Redbridge", zone:4, lines:[1], lat:51.576368336, lng:0.045413423, }, { name:"Regent's Park", zone:1, lines:[0], lat:51.523573745, lng:-0.146845189, }, { name:"Richmond", zone:4, lines:[3], lat:51.463232128, lng:-0.301717924, }, { name:"Rickmansworth", zone:7, lines:[6], lat:51.640327496, lng:-0.473664594, }, { name:"Roding Valley", zone:4, lines:[1], lat:51.617179945, lng:0.043856090, }, { name:"Royal Oak", zone:2, lines:[2,4], lat:51.519090535, lng:-0.188212572, }, { name:"Ruislip", zone:6, lines:[6,8], lat:51.571511893, lng:-0.421416905, }, { name:"Ruislip Gardens", zone:5, lines:[1], lat:51.560651409, lng:-0.410993312, }, { name:"Ruislip Manor", zone:6, lines:[6,8], lat:51.573246766, lng:-0.412305976, }, { name:"Russell Square", zone:1, lines:[8], lat:51.522981488, lng:-0.124290511, }, { name:"Seven Sisters", zone:3, lines:[9], lat:51.583414085, lng:-0.072478320, }, { name:"Shepherd's Bush", zone:2, lines:[1], lat:51.504520582, lng:-0.218739321, }, { name:"Shepherd's Bush Market", zone:2, lines:[2,4], lat:51.505626762, lng:-0.226281420, }, { name:"Sloane Square", zone:1, lines:[2,3], lat:51.492361608, lng:-0.156471428, }, { name:"Snaresbrook", zone:4, lines:[1], lat:51.580893551, lng:0.021492179, }, { name:"South Ealing", zone:3, lines:[8], lat:51.501439579, lng:-0.306982297, }, { name:"South Harrow", zone:5, lines:[8], lat:51.564742755, lng:-0.352171569, }, { name:"South Kensington", zone:1, lines:[2,3,8], lat:51.494072248, lng:-0.173903021, }, { name:"South Kenton", zone:4, lines:[0], lat:51.570231405, lng:-0.308554798, }, { name:"South Ruislip", zone:5, lines:[1], lat:51.556575808, lng:-0.398609938, }, { name:"South Wimbledon", zone:3, lines:[7], lat:51.415358688, lng:-0.191946864, }, { name:"South Woodford", zone:4, lines:[1], lat:51.591793443, lng:0.027321779, }, { name:"Southfields", zone:3, lines:[3], lat:51.445005910, lng:-0.206514155, }, { name:"Southgate", zone:4, lines:[8], lat:51.632375610, lng:-0.127741029, }, { name:"Southwark", zone:1, lines:[5], lat:51.503912041, lng:-0.105079612, }, { name:"St James's Park", zone:1, lines:[2,3], lat:51.499417081, lng:-0.134167037, }, { name:"St John's Wood", zone:2, lines:[5], lat:51.534629498, lng:-0.174155402, }, { name:"St Pauls'", zone:1, lines:[1], lat:51.514875732, lng:-0.097559304, }, { name:"Stamford Brook", zone:2, lines:[3], lat:51.494865328, lng:-0.245421899, }, { name:"Stanmore", zone:5, lines:[5], lat:51.619673212, lng:-0.303078406, }, { name:"Stepney Green", zone:2, lines:[3,4], lat:51.521979324, lng:-0.046455251, }, { name:"Stockwell", zone:2, lines:[7,9], lat:51.472241139, lng:-0.122895213, }, { name:"Stonebridge Park", zone:3, lines:[0], lat:51.543989547, lng:-0.275371113, }, { name:"Stratford", zone:3, lines:[1,5], lat:51.541377658, lng:-0.003185389, }, { name:"Sudbury Hill", zone:4, lines:[8], lat:51.557060075, lng:-0.336185424, }, { name:"Sudbury Town", zone:4, lines:[8], lat:51.550846283, lng:-0.315443563, }, { name:"Swiss Cottage", zone:2, lines:[5], lat:51.543382980, lng:-0.174736507, }, { name:"Temple", zone:1, lines:[2,3], lat:51.511041845, lng:-0.113692896, }, { name:"Theydon Bois", zone:6, lines:[1], lat:51.671773226, lng:0.103118143, }, { name:"Tooting Bec", zone:3, lines:[7], lat:51.435836121, lng:-0.159677894, }, { name:"Tooting Broadway", zone:3, lines:[7], lat:51.427516012, lng:-0.167954323, }, { name:"Tottenham Court Road", zone:1, lines:[1,7], lat:51.516276082, lng:-0.130856050, }, { name:"Tottenham Hale", zone:3, lines:[9], lat:51.588112841, lng:-0.060276117, }, { name:"Totteridge", zone:4, lines:[7], lat:51.630265127, lng:-0.179247175, }, { name:"Tower Hill", zone:1, lines:[2,3], lat:51.510139104, lng:-0.076335576, }, { name:"Tufnell Park", zone:2, lines:[7], lat:51.556736692, lng:-0.137907511, }, { name:"Turnham Green", zone:2, lines:[3,8], lat:51.495185091, lng:-0.254500038, }, { name:"Turnpike Lane", zone:3, lines:[8], lat:51.590364168, lng:-0.102786628, }, { name:"Upminster", zone:6, lines:[3], lat:51.558959400, lng:0.251068748, }, { name:"Upminster Bridge", zone:6, lines:[3], lat:51.558822332, lng:0.235751225, }, { name:"Upney", zone:4, lines:[3], lat:51.538404215, lng:0.101558788, }, { name:"Upton Park", zone:3, lines:[3,4], lat:51.535300668, lng:0.035269676, }, { name:"Uxbridge", zone:6, lines:[6,8], lat:51.546558503, lng:-0.478086633, }, { name:"Vauxhall", zone:1, lines:[9], lat:51.485802837, lng:-0.123728675, }, { name:"Victoria", zone:1, lines:[2,3,9], lat:51.496415738, lng:-0.143828518, }, { name:"Walthamstow Central", zone:3, lines:[9], lat:51.583022656, lng:-0.019910230, }, { name:"Wanstead", zone:4, lines:[1], lat:51.575586046, lng:0.028739769, }, { name:"Warren Street", zone:1, lines:[7,9], lat:51.524582490, lng:-0.138254185, }, { name:"Warwick Avenue", zone:2, lines:[0], lat:51.523345437, lng:-0.183649798, }, { name:"Waterloo", zone:1, lines:[0,7,10], lat:51.503576438, lng:-0.114051784, }, { name:"Watford", zone:7, lines:[6], lat:51.657472766, lng:-0.417233505, }, { name:"Wembley Central", zone:4, lines:[0], lat:51.552393189, lng:-0.296820887, }, { name:"Wembley Park", zone:4, lines:[5,6], lat:51.563321392, lng:-0.279220664, }, { name:"West Acton", zone:3, lines:[1], lat:51.517928534, lng:-0.280959813, }, { name:"West Brompton", zone:2, lines:[3], lat:51.487326810, lng:-0.195513643, }, { name:"West Finchley", zone:4, lines:[7], lat:51.609549070, lng:-0.188445598, }, { name:"West Ham", zone:3, lines:[3,4,5], lat:51.528257231, lng:0.005040569, }, { name:"West Hampstead", zone:2, lines:[5], lat:51.546770903, lng:-0.190729830, }, { name:"West Harrow", zone:5, lines:[6], lat:51.579833961, lng:-0.352886823, }, { name:"West Kensington", zone:2, lines:[3], lat:51.490565630, lng:-0.206454516, }, { name:"West Ruislip", zone:6, lines:[1], lat:51.569591648, lng:-0.437840503, }, { name:"Westbourne Park", zone:2, lines:[2,4], lat:51.520991060, lng:-0.200858000, }, { name:"Westminster", zone:1, lines:[2,3,5], lat:51.501156967, lng:-0.124793827, }, { name:"White City", zone:2, lines:[1], lat:51.512044211, lng:-0.224221914, }, { name:"Whitechapel", zone:2, lines:[3,4], lat:51.519529261, lng:-0.059968492, }, { name:"Willesden Green", zone:2, lines:[5], lat:51.549376909, lng:-0.222378339, }, { name:"Willesden Junction", zone:2, lines:[0], lat:51.532259837, lng:-0.244259053, }, { name:"Wimbledon", zone:3, lines:[3], lat:51.421464866, lng:-0.206353858, }, { name:"Wimbledon Park", zone:3, lines:[3], lat:51.434538960, lng:-0.199572031, }, { name:"Wood Green", zone:3, lines:[8], lat:51.597536265, lng:-0.109617731, }, { name:"Wood Lane", zone:2, lines:[2,4], lat:51.509958279, lng:-0.224245427, }, { name:"Woodford", zone:4, lines:[1], lat:51.607093559, lng:0.034027185, }, { name:"Woodside Park", zone:4, lines:[7], lat:51.617872781, lng:-0.185394277, } ]
+				var map;
+				var circles;
+				
+				function init() {
+					map = new google.maps.Map(document.getElementById("mapcanvas"), {
+						zoom: 14,
+						center: new google.maps.LatLng(51.508596,-0.124884),
+						mapTypeId: google.maps.MapTypeId.ROADMAP,
+						panControl: false,
+						streetViewControl: false
+					});
+					var overlay = new OpacityOverlayHack();
+					setTimeout(createCircles, 500);
+				}
+				
+				// Extend OverlayView to hack in transparancy for overlay layers
+				function OpacityOverlayHack() {
+					this.setMap(map);
+				}
+				
+				OpacityOverlayHack.prototype = new google.maps.OverlayView();
+				
+				OpacityOverlayHack.prototype.onAdd = function() {
+					var s = this.getPanes().overlayLayer.getAttribute("style") + " opacity: 0.35";
+					this.getPanes().overlayLayer.setAttribute("style", s);
+				}
+				
+				OpacityOverlayHack.prototype.draw = function() {
+				}
+				
+				function createCircles() {
+					if (!circles) {
+						circles = [];
+						
+						var circleOptions = {
+						  strokeColor: "#000000",
+						  strokeOpacity: 0,
+						  strokeWeight: 0,
+						  fillColor: "#0000FF",
+						  fillOpacity: 1,
+						  clickable: false
+						};
+						
+						for (var i = 0; i < tubestations.length; i++) {
+							var circle = new google.maps.Circle(circleOptions);
+							circle.setCenter(new google.maps.LatLng(tubestations[i].lat, tubestations[i].lng));
+							circle.setRadius(500);
+							circle.setMap(map);
+							circles.push(circle);
+						}
+					}
+				}
+				
+				function updateRadius() {
+					var distance = document.getElementById('distance_dropdown').value * 1;
+					for (var i = 0; i < tubestations.length; i++) {
+						circles[i].setRadius(distance);
+					}
+				}
+				
+				function updateVisibility() {
+					var zones = [];
+					for (var i = 0; i < document.controls.zone.length; i++) {
+						if (document.controls.zone[i].checked) {
+							zones.push(parseInt(document.controls.zone[i].value));
+						}
+					}
+					
+					var lines = [];
+					for (var i = 0; i < document.controls.line.length; i++) {
+						if (document.controls.line[i].checked) {
+							lines.push(parseInt(document.controls.line[i].value));
+						}
+					}
+					
+					for (var i = 0; i < tubestations.length; i++) {
+						
+						var visible = true;
+						
+						var matchingLine = false;
+						for (var j = 0; j < tubestations[i].lines.length; j++) {
+							for (var k = 0; k < lines.length; k++) {
+								if (tubestations[i].lines[j] == lines[k]) {
+									matchingLine = true;
+								}
+							}
+						}
+						visible = matchingLine;
+						
+						if (zones.indexOf(tubestations[i].zone) < 0) {
+							visible = false;
+						}
+						
+						if (visible) {
+							if (!circles[i].getMap()) {
+								circles[i].setMap(map);
+							}
+						} else {
+							if (circles[i].getMap()) {
+								circles[i].setMap(null);
+							}
+						}
+					}
+				}
+				
+				function changeZone() {
+					var totalChecked = 0;
+					for (var i = 0; i < document.controls.zone.length; i++) {
+						if (document.controls.zone[i].checked) {
+							totalChecked++;
+						}
+					}
+					document.controls.allzones.checked = (totalChecked >= 9);
+					updateVisibility();
+				}
+				
+				function changeAllZones() {
+					if (document.controls.allzones.checked) {
+						for (var i = 0; i < document.controls.zone.length; i++) {
+							document.controls.zone[i].checked = true;
+						}
+					} else {
+						for (var i = 0; i < document.controls.zone.length; i++) {
+							document.controls.zone[i].checked = false;
+						}
+					}
+					updateVisibility();
+				}
+				
+				function changeLine() {
+					var totalChecked = 0;
+					for (var i = 0; i < document.controls.line.length; i++) {
+						if (document.controls.line[i].checked) {
+							totalChecked++;
+						}
+					}
+					document.controls.alllines.checked = (totalChecked >= 11);
+					updateVisibility();
+				}
+				
+				function changeAllLines() {
+					if (document.controls.alllines.checked) {
+						for (var i = 0; i < document.controls.line.length; i++) {
+							document.controls.line[i].checked = true;
+						}
+					} else {
+						for (var i = 0; i < document.controls.line.length; i++) {
+							document.controls.line[i].checked = false;
+						}
+					}
+					updateVisibility();
+				}
+				
+				return ({
+					init: init,
+					updateRadius: updateRadius,
+					changeLine: changeLine,
+					changeAllLines: changeAllLines,
+					changeZone: changeZone,
+					changeAllZones: changeAllZones});
+			})();
+    	</script>
+    </head>
+    <body onload="tube.init();">
+    	<div id="mapcanvas"></div>
+		<div id="controls">
+			<form name="controls">
+				<h1>Tube Station Proximity Map</h1>
+				<div id="distance">
+					<label for="distance_dropdown">Distance:</label>
+					<select id="distance_dropdown" name="distance_dropdown" onchange="tube.updateRadius();">
+						<option value="100">100m (approx 1 min)</option>
+						<option value="200">200m (approx 3 min)</option>
+						<option value="300">300m (approx 4 min)</option>
+						<option value="400">400m (approx 5 min)</option>
+						<option value="500" selected="true">500m (approx 6 min)</option>
+						<option value="600">600m (approx 7 min)</option>
+						<option value="700">700m (approx 9 min)</option>
+						<option value="800">800m (approx 10 min)</option>
+						<option value="900">900m (approx 11 min)</option>
+						<option value="1000">1000m (approx 12 min)</option>
+						<option value="1100">1100m (approx 13 min)</option>
+						<option value="1200">1200m (approx 14 min)</option>
+					</select>
+				</div>
+				<div id="lines">
+					<label>Lines:</label>
+					<p><input id="alllines" name="alllines" type="checkbox" value="all" onchange="tube.changeAllLines();" checked="true"/>
+					<label for="alllines">All</label></p>
+					<p><input id="line0" name="line" type="checkbox" value="0" onchange="tube.changeLine();" checked="true"/>
+					<label for="line0">Bakerloo</label></p>
+					<p><input id="line1" name="line" type="checkbox" value="1" onchange="tube.changeLine();" checked="true"/>
+					<label for="line1">Central</label></p>
+					<p><input id="line2" name="line" type="checkbox" value="2" onchange="tube.changeLine();" checked="true"/>
+					<label for="line2">Circle</label></p>
+					<p><input id="line3" name="line" type="checkbox" value="3" onchange="tube.changeLine();" checked="true"/>
+					<label for="line3">District</label></p>
+					<p><input id="line4" name="line" type="checkbox" value="4" onchange="tube.changeLine();" checked="true"/>
+					<label for="line4">Hammersmith &amp; City</label></p>
+					<p><input id="line5" name="line" type="checkbox" value="5" onchange="tube.changeLine();" checked="true"/>
+					<label for="line5">Jubilee</label></p>
+					<p><input id="line6" name="line" type="checkbox" value="6" onchange="tube.changeLine();" checked="true"/>
+					<label for="line6">Metropolitan</label></p>
+					<p><input id="line7" name="line" type="checkbox" value="7" onchange="tube.changeLine();" checked="true"/>
+					<label for="line7">Northern</label></p>
+					<p><input id="line8" name="line" type="checkbox" value="8" onchange="tube.changeLine();" checked="true"/>
+					<label for="line8">Piccadilly</label></p>
+					<p><input id="line9" name="line" type="checkbox" value="9" onchange="tube.changeLine();" checked="true"/>
+					<label for="line9">Victoria</label></p>
+					<p><input id="line10" name="line" type="checkbox" value="10" onchange="tube.changeLine();" checked="true"/>
+					<label for="line10">Waterloo &amp; City</label></p>
+				</div>
+				<div id="zones">
+					<label>Zones:</label>
+					<p><input id="allzones" name="allzones" type="checkbox" value="all" onchange="tube.changeAllZones();" checked="true"/>
+					<label for="allzones">All</label></p>
+					<p><input id="zone1" name="zone" type="checkbox" value="1" onchange="tube.changeZone();" checked="true"/>
+					<label for="zone1">1</label></p>
+					<p><input id="zone2" name="zone" type="checkbox" value="2" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone2">2</label></p>
+					<p><input id="zone3" name="zone" type="checkbox" value="3" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone3">3</label></p>
+					<p><input id="zone4" name="zone" type="checkbox" value="4" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone4">4</label></p>
+					<p><input id="zone5" name="zone" type="checkbox" value="5" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone5">5</label></p>
+					<p><input id="zone6" name="zone" type="checkbox" value="6" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone6">6</label></p>
+					<p><input id="zone7" name="zone" type="checkbox" value="7" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone7">7</label></p>
+					<p><input id="zone8" name="zone" type="checkbox" value="8" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone8">8</label></p>
+					<p><input id="zone9" name="zone" type="checkbox" value="9" onchange="tube.changeZone();" checked="true"//>
+					<label for="zone9">9</label></p>
+				</div>
+			</form>
+		</div>
+    </body>
+</html>

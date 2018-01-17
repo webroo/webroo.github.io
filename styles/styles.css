@@ -1,0 +1,63 @@
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-weight:inherit;font-style:inherit;font-family:inherit;font-size:100%;vertical-align:baseline}
+body{line-height:1;color:#000;background:#fff}
+ol,ul{list-style:none}
+table{border-collapse:separate;border-spacing:0;vertical-align:middle}
+caption,th,td{text-align:left;font-weight:normal;vertical-align:middle}
+a img{border:none}
+article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,main{margin:0;padding:0;border:0;outline:0;display:block}
+audio,canvas,video{display:inline-block;*display:inline;*zoom:1}
+audio:not([controls]),[hidden]{display:none}
+html{-webkit-text-size-adjust:100%;-webkit-overflow-scrolling:touch}
+body{font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#444}
+h1,h2{font-family:Dosis,Helvetica,Arial,sans-serif}
+p{line-height:1.6em;margin-top:1.5em}
+blockquote{font-family:Georgia;font-style:italic;margin-left:20px}
+strong{font-weight:bold}
+em{font-style:italic}
+hr{margin:30px 0 60px 0;height:1px;border:none;background:#eaeaea}
+td{vertical-align:top}
+pre{margin-top:22px}
+code{font-family:Menlo,Consolas,Courier,monospace;font-size:13px;margin:0 2px;padding:0 5px;border:1px solid #eaeaea;-webkit-border-radius:3px;border-radius:3px;background-color:#f8f8f8}
+.central-content{margin:auto;max-width:700px;padding:0 40px}
+header{background:#789;color:#fff;padding-top:22px;}
+header h1{font-size:68px;margin-left:-3px}
+header h2{font-size:30px;margin-bottom:.3em}
+header nav{border-top:1px solid rgba(255,255,255,0.7);margin-top:20px;padding-left:1px}
+header li{display:inline-block;margin-right:30px;height:43px;font-size:13px;line-height:44px;}
+header li:last-child{margin-right:0}
+header a{color:#fff;display:block;text-decoration:none;text-transform:uppercase;}
+header a:hover{text-decoration:underline}
+section#main{margin-top:50px;margin-bottom:52px;}
+section#main h1{color:#000;font-size:36px;margin-top:50px;}
+section#main h1 a{color:#000;text-decoration:none}
+section#main h1:first-child{margin-top:0}
+section#main h2{color:#000;margin-top:1.5em;font-size:26px;}
+section#main h2:first-child{margin-top:8px}
+section#main a{color:#757575;text-decoration:underline;}
+section#main a:hover{color:#3e90dd}
+section#main img{max-width:100%;display:block}
+section#main ul{margin-top:22px;padding-left:35px;list-style:outside disc}
+section#main ol{margin-top:22px;padding-left:38px;list-style:outside decimal}
+section#main li{line-height:1.7em}
+section#main time{color:#999;display:block;font-size:14px;padding-top:2px}
+section#main .moreArticles{margin-top:3em}
+section#main article h1{margin-top:20px}
+section#main #articles{margin-top:11px;padding:0;list-style:none;}
+section#main #articles li{margin-bottom:22px;}
+section#main #articles li:last-child{margin-bottom:0}
+section#main #articles time{float:left;color:#757575;padding-top:1px}
+section#main #articles a{display:block;margin-left:110px}
+section#main #articles p{margin-top:0;margin-left:110px}
+footer .copyright{color:#999;border-top:1px solid #eaeaea;font-size:13px;padding-top:28px;padding-bottom:30px}
+@media screen and (max-width: 767px){body{font-size:14px}
+.central-content{padding:0 15px}
+header{padding-top:17px;}
+header h1{font-size:58px}
+header h2{font-size:26px}
+header li{font-size:12px;margin-right:24px}
+section#main{margin-top:45px;}
+section#main h1{font-size:30px;margin-top:45px}
+section#main h2{font-size:21px}
+section#main time{font-size:13px}
+code{font-size:11px}
+}
